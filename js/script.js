@@ -1,7 +1,23 @@
 let url = 'http://localhost:3000/products';
 let editId = null;
 let deleteId = null;
+let editProdcut;
 const modal = new bootstrap.Modal(document.getElementById('productModal'));
+function handleRoute() {
+    const hash = window.location.hash;
+    if (hash === '#add-product') {
+        openModal(null);
+    }
+    else if (hash === '#edit-product') {
+        openModal(editProdcut);
+    }
+    else {
+        modal.hide();
+    }
+}
+
+window.addEventListener('hashchange', handleRoute);
+window.addEventListener('DOMContentLoaded', handleRoute);
 
 
 ['quantity', 'price'].forEach(id =>
@@ -12,7 +28,13 @@ const modal = new bootstrap.Modal(document.getElementById('productModal'));
     })
 );
 
-document.getElementById('addBtn').addEventListener('click', () => openModal(null));
+document.getElementById('addBtn').addEventListener('click', () => { window.location.hash = '#add-product' });
+document.getElementById('productModal').addEventListener('hidden.bs.modal', () => {
+    if (window.location.hash === '#add-product' || window.location.hash === '#edit-product') {
+        history.pushState('', '', window.location.pathname + window.location.search);
+    }
+})
+
 
 document.getElementById('saveBtn').addEventListener('click', saveProduct);
 
@@ -20,11 +42,10 @@ document.getElementById('productTable').addEventListener('click', async (event) 
     const btn = event.target.closest('button');
     if (!btn) return;
     const id = btn.dataset.id;
-
     if (btn.textContent.trim() == 'Edit') {
         const res = await fetch(`${url}/${id}`);
-        const p = await res.json();
-        openModal(p);
+        editProdcut = await res.json();
+        window.location.hash = '#edit-product';
     }
 
     if (btn.textContent.trim() == 'Delete') {
