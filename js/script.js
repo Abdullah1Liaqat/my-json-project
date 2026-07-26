@@ -2,17 +2,16 @@ let url = 'http://localhost:3000/products';
 let editId = null;
 let deleteId = null;
 let editProdcut;
-const modal = new bootstrap.Modal(document.getElementById('productModal'));
 function handleRoute() {
     const hash = window.location.hash;
     if (hash === '#add-product') {
-        openModal(null);
+        showForm(null);
     }
     else if (hash === '#edit-product') {
-        openModal(editProdcut);
+        showForm(editProdcut);
     }
     else {
-        modal.hide();
+        showTable();
     }
 }
 
@@ -27,14 +26,6 @@ window.addEventListener('DOMContentLoaded', handleRoute);
         document.getElementById('total').value = (q * p);
     })
 );
-
-document.getElementById('addBtn').addEventListener('click', () => { window.location.hash = '#add-product' });
-document.getElementById('productModal').addEventListener('hidden.bs.modal', () => {
-    if (window.location.hash === '#add-product' || window.location.hash === '#edit-product') {
-        history.pushState('', '', window.location.pathname + window.location.search);
-    }
-})
-
 
 document.getElementById('saveBtn').addEventListener('click', saveProduct);
 
@@ -77,15 +68,22 @@ document.getElementById('productTable').addEventListener('click', async (event) 
 
 });
 
-function openModal(product) {
+function showForm(product) {
     document.getElementById('mineAlert').classList.add('d-none');
     editId = product ? product.id : null;
-    document.getElementById('modalTitle').textContent = product ? 'Edit Product' : 'Add Product';
+    document.getElementById('formTitle').textContent = product ? 'Edit Product' : 'Add Product';
     document.getElementById('name').value = product ? product.name : '';
     document.getElementById('quantity').value = product ? product.quantity : '';
     document.getElementById('price').value = product ? product.pricePerUnit : '';
     document.getElementById('total').value = product ? product.totalPrice : '';
-    modal.show();
+    document.getElementById('tablePage').classList.add('d-none');
+    document.getElementById('formPage').classList.remove('d-none');
+}
+function showTable() {
+    document.getElementById('formPage').classList.add('d-none');
+    document.getElementById('tablePage').classList.remove('d-none');
+    editProdcut = null;
+    editId = null;
 }
 
 async function loadProducts() {
@@ -129,7 +127,8 @@ async function saveProduct() {
     let modified_url = editId ? `${url}/${editId}` : url;
     const method = editId ? 'PUT' : 'POST';
     await fetch(modified_url, { method, headers: { Accept: 'application/json', 'Content-Type': 'application/json' }, body });
-    modal.hide();
+    history.pushState('', '', window.location.pathname);
+    showTable();
     Swal.fire({
         title: "SUCCESS",
         text: "Record saved successfully!",
@@ -141,5 +140,9 @@ async function saveProduct() {
     });
     loadProducts();
 }
+document.getElementById('cancelBtn').addEventListener('click', () => {
+    history.pushState('', '', window.location.pathname);
+    showTable();
+});
 
 loadProducts();
