@@ -1,9 +1,13 @@
+function load() {
+    loadProducts();
+    initTableActions();
+}
 function loadProducts() {
     const tbody = document.getElementById('productTable');
     document.getElementById('tablePage').classList.remove('d-none');
     document.getElementById('formPage').classList.add('d-none');
     tbody.innerHTML = '<tr><td colspan="6" class="text-center">Loading...</td></tr>';
-    fetch(url)
+    fetch(PRODUCTS_URL)
         .then(res => res.json())
         .then(products => {
             if (!products.length) {
@@ -19,10 +23,9 @@ function loadProducts() {
               <td>$${p.totalPrice}</td>
               <td>
                 <button class="btn btn-sm btn-outline-warning" data-id="${p.id}"><i class="bi bi-pencil"></i> Edit</button>
-                <button class="btn btn-sm btn-outline-danger" data-id="${p.id}"><i class="bi bi-trash"></i> Delete</button>
+                <button class="btn btn-sm btn-outline-danger" data-id="${p.id}" name="${p.name}"><i class="bi bi-trash"></i> Delete</button>
               </td>
             </tr>`).join('');
-            initTableActions();
         })
         .catch(() => {
             tbody.innerHTML = '<tr><td colspan="6" class="text-center text-danger py-3">Failed to load. Make sure server is running.</td></tr>';
@@ -34,6 +37,7 @@ function initTableActions() {
         const btn = event.target.closest('button');
         if (!btn) return;
         const id = btn.dataset.id;
+        const name =btn.name;
 
         if (btn.textContent.trim() === 'Edit') {
             window.location.hash = `#/products/${id}/edit`;
@@ -41,9 +45,9 @@ function initTableActions() {
 
         if (btn.textContent.trim() === 'Delete') {
             const result = await Swal.fire({
-                title: 'Confirm Deletion!',
+                title: 'Confirm Deletion',
                 confirmButtonColor: "#FF0000",
-                text: 'Do you want to delete?',
+                text: `Do you want to delete ${name}?`,
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonText: 'Delete',
@@ -51,8 +55,7 @@ function initTableActions() {
                 position: "top-right"
             });
             if (result.isConfirmed) {
-                await fetch(`${url}/${id}`, { method: 'DELETE' });
-                loadProducts();
+                await fetch(`${PRODUCTS_URL}/${id}`, { method: 'DELETE' });
                 Swal.fire({
                     title: 'Deleted!',
                     icon: 'success',
@@ -65,3 +68,4 @@ function initTableActions() {
         }
     });
 }
+load();
