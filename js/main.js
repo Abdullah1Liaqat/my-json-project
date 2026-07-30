@@ -5,7 +5,7 @@ function loadScript(src, callback) {
         if (callback) {
             callback();
         }
-        if (`${src}` === 'js/load.js') {
+        if (`${src}` === 'js/listing.js') {
             load();
         }
         return;
@@ -17,15 +17,23 @@ function loadScript(src, callback) {
 
 }
 async function handleRoute() {
+    document.getElementById('errorPage').classList.add('d-none');
+    document.getElementById('tablePage').classList.add('d-none');
+    document.getElementById('formPage').classList.add('d-none');
     const hash = window.location.hash;
     if (hash === '#/products') {
-        loadScript('js/load.js');
+        loadScript('js/listing.js');
     } else if (hash === '#/products/create') {
         loadScript('js/save.js', () => create());
     } else if (hash.includes('edit')) {
         const parts = hash.split('/');
         const id = parts[2];
         loadScript('js/save.js', () => Edit(id));
+    }
+    else {
+        document.getElementById('tablePage').classList.add('d-none');
+        document.getElementById('formPage').classList.add('d-none');
+        document.getElementById('errorPage').classList.remove('d-none');
     }
 }
 

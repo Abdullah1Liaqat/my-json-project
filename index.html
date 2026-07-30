@@ -13,12 +13,15 @@
 <body class="bg-light">
     <nav class="navbar navbar-dark bg-dark mb-4">
         <div class="container">
-            <a href ='#/products' class="navbar-brand fw-bold">Product Management</a>
+            <a href='#/products' class="navbar-brand fw-bold">Product Management</a>
             <a href="#/products/create" class="nav-link text-white" id="addBtn">Add Product</a>
         </div>
     </nav>
 
     <div class="container">
+        <div id="errorPage" class="d-none">
+            <h2 class="text-center mt-5">404 - Page Not Found</h2>
+        </div>
         <div id="successAlert" class="alert alert-success alert-dismissible fade show d-none mt-3" role="alert">
             Product saved successfully!
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>

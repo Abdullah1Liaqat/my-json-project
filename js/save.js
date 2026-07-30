@@ -1,4 +1,4 @@
- function formListeners(editId) {
+function formListeners(editId) {
     ['quantity', 'price'].forEach(id =>
         document.getElementById(id).addEventListener('input', () => {
             const q = document.getElementById('quantity').value;
@@ -48,18 +48,29 @@ async function Edit(id) {
     fetch(`${PRODUCTS_URL}/${id}`)
         .then(res => res.json())
         .then(product => {
+            if (product.name === undefined) {
+                document.getElementById('tablePage').classList.add('d-none');
+                document.getElementById('formPage').classList.add('d-none');
+                document.getElementById('errorPage').classList.remove('d-none');
+                return;
+            }
             document.getElementById('formTitle').textContent = 'Edit Product';
             document.getElementById('name').value = product.name;
             document.getElementById('quantity').value = product.quantity;
             document.getElementById('price').value = product.pricePerUnit;
             document.getElementById('total').value = product.totalPrice;
-             formListeners(product.id);
+            formListeners(product.id);
         });
 }
 function create() {
+    document.getElementById('formTitle').textContent = 'Edit Product';
+    document.getElementById('name').value = '';
+    document.getElementById('quantity').value = '';
+    document.getElementById('price').value = '';
+    document.getElementById('total').value = '';
     document.getElementById('tablePage').classList.add('d-none');
     document.getElementById('formPage').classList.remove('d-none');
     document.getElementById('formTitle').textContent = 'Add Product';
     document.getElementById('mineAlert').classList.add('d-none');
-     formListeners(null);
+    formListeners(null);
 }

@@ -64,7 +64,9 @@ function initTableActions() {
                     showConfirmButton: false,
                     timer: 3000
                 });
+                loadProducts();
             }
+
         }
     });
 }
